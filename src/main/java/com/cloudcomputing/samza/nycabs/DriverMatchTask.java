@@ -36,14 +36,16 @@ public class DriverMatchTask implements StreamTask, InitableTask {
      */
     private double MAX_MONEY = 100.0;
     private KeyValueStore<String, Map<String, Object>> driverStore;
-    private ObjectMapper objectMapper;
+    // private ObjectMapper objectMapper;
+    private Gson gson;
 
     @Override
     @SuppressWarnings("unchecked")
     public void init(Context context) throws Exception {
         // Initialize (maybe the kv stores?)
         driverStore = (KeyValueStore<String, Map<String, Object>>) context.getTaskContext().getStore("driver-loc");
-        objectMapper = new ObjectMapper();
+        // objectMapper = new ObjectMapper();
+        gson = new Gson();
     }
 
     @Override
@@ -238,9 +240,9 @@ public class DriverMatchTask implements StreamTask, InitableTask {
 
             // Serialize match result to JSON and emit to match-stream
             try {
-                String matchJson = objectMapper.writeValueAsString(matchResult);
+                String matchJson = gson.toJson(matchResult);
                 collector.send(new OutgoingMessageEnvelope(MATCH_STREAM, matchJson));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.err.println("Failed to serialize match result: " + e.getMessage());
             }
         }
