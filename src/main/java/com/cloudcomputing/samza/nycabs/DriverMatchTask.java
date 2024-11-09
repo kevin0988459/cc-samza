@@ -13,6 +13,7 @@ import org.apache.samza.task.InitableTask;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.StreamTask;
 import org.apache.samza.task.TaskCoordinator;
+
 import com.google.gson.Gson;
 
 import java.util.*;
@@ -20,6 +21,8 @@ import java.util.*;
 import org.apache.samza.storage.kv.KeyValueIterator;
 
 import static com.cloudcomputing.samza.nycabs.DriverMatchConfig.MATCH_STREAM;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * Consumes the stream of driver location updates and rider cab requests.
@@ -53,15 +56,15 @@ public class DriverMatchTask implements StreamTask, InitableTask {
         into the same reducer.
          */
         String incomingStream = envelope.getSystemStreamPartition().getStream();
-        String messageObj = envelope.getMessage().toString();
+        String messageJson = envelope.getMessage().toString();
         try {
-            JsonNode jsonNode = objectMapper.valueToTree(messageObj);
+            JsonObject event = JsonParser.parseString(messageJson).getAsJsonObject();
             if (incomingStream.equals(DriverMatchConfig.DRIVER_LOC_STREAM.getStream())) {
                 // Handle Driver Location messages
-                handleDriverLocation(jsonNode);
+                handleDriverLocation(event);
             } else if (incomingStream.equals(DriverMatchConfig.EVENT_STREAM.getStream())) {
                 // Handle Event messages
-                handleEvent(jsonNode, collector);
+                handleEvent(event, collector);
             } else {
                 throw new IllegalStateException("Unexpected input stream: " + envelope.getSystemStreamPartition());
             }
@@ -75,11 +78,11 @@ public class DriverMatchTask implements StreamTask, InitableTask {
      *
      * @param jsonNode
      */
-    private void handleDriverLocation(JsonNode locationEvent) {
-        int blockId = locationEvent.get("blockId").asInt();
-        int driverId = locationEvent.get("driverId").asInt();
-        double latitude = locationEvent.get("latitude").asDouble();
-        double longitude = locationEvent.get("longitude").asDouble();
+    private void handleDriverLocation(JsonObject locationEvent) {
+        int blockId = locationEvent.get("blockId").getAsInt();
+        int driverId = locationEvent.get("driverId").getAsInt();
+        double latitude = locationEvent.get("latitude").getAsDouble();
+        double longitude = locationEvent.get("longitude").getAsDouble();
 
         String key = constructKey(blockId, driverId);
 
@@ -100,9 +103,9 @@ public class DriverMatchTask implements StreamTask, InitableTask {
      * @param jsonNode
      * @param collector
      */
-    private void handleEvent(JsonNode event, MessageCollector collector) {
+    private void handleEvent(JsonObject event, MessageCollector collector) {
         System.out.println("event:" + event);
-        String eventType = event.get("type").asText();
+        String eventType = event.get("type").getAsString();
         System.out.println("eventType:" + eventType);
         switch (eventType) {
             case "ENTERING_BLOCK":
@@ -128,15 +131,15 @@ public class DriverMatchTask implements StreamTask, InitableTask {
      *
      * @param event
      */
-    private void handleEnteringBlock(JsonNode event) {
-        int blockId = event.get("blockId").asInt();
-        int driverId = event.get("driverId").asInt();
-        double latitude = event.get("latitude").asDouble();
-        double longitude = event.get("longitude").asDouble();
-        String gender = event.get("gender").asText();
-        double rating = event.get("rating").asDouble();
-        int salary = event.get("salary").asInt();
-        String status = event.get("status").asText();
+    private void handleEnteringBlock(JsonObject event) {
+        int blockId = event.get("blockId").getAsInt();
+        int driverId = event.get("driverId").getAsInt();
+        double latitude = event.get("latitude").getAsDouble();
+        double longitude = event.get("longitude").getAsDouble();
+        String gender = event.get("gender").getAsString();
+        double rating = event.get("rating").getAsDouble();
+        int salary = event.get("salary").getAsInt();
+        String status = event.get("status").getAsString();
         // only put into kv store if the driver is available
         if (status.equals("AVAILABLE")) {
             String key = constructKey(blockId, driverId);
@@ -160,9 +163,9 @@ public class DriverMatchTask implements StreamTask, InitableTask {
      *
      * @param event
      */
-    private void handleLeavingBlock(JsonNode event) {
-        int blockId = event.get("blockId").asInt();
-        int driverId = event.get("driverId").asInt();
+    private void handleLeavingBlock(JsonObject event) {
+        int blockId = event.get("blockId").getAsInt();
+        int driverId = event.get("driverId").getAsInt();
 
         String key = constructKey(blockId, driverId);
         // delete from kv store
@@ -175,12 +178,12 @@ public class DriverMatchTask implements StreamTask, InitableTask {
      * @param event
      * @param collector
      */
-    private void handleRideRequest(JsonNode event, MessageCollector collector) {
-        int blockId = event.get("blockId").asInt();
-        int clientId = event.get("clientId").asInt();
-        double clientLatitude = event.get("latitude").asDouble();
-        double clientLongitude = event.get("longitude").asDouble();
-        String genderPreference = event.get("gender_preference").asText();
+    private void handleRideRequest(JsonObject event, MessageCollector collector) {
+        int blockId = event.get("blockId").getAsInt();
+        int clientId = event.get("clientId").getAsInt();
+        double clientLatitude = event.get("latitude").getAsDouble();
+        double clientLongitude = event.get("longitude").getAsDouble();
+        String genderPreference = event.get("gender_preference").getAsString();
 
         double highestMatchScore = -1;
         String bestDriverKey = null;
@@ -250,12 +253,12 @@ public class DriverMatchTask implements StreamTask, InitableTask {
      *
      * @param event
      */
-    private void handleRideComplete(JsonNode event) {
-        int blockId = event.get("blockId").asInt();
-        int driverId = event.get("driverId").asInt();
-        double newLatitude = event.get("latitude").asDouble();
-        double newLongitude = event.get("longitude").asDouble();
-        double userRating = event.get("user_rating").asDouble();
+    private void handleRideComplete(JsonObject event) {
+        int blockId = event.get("blockId").getAsInt();
+        int driverId = event.get("driverId").getAsInt();
+        double newLatitude = event.get("latitude").getAsDouble();
+        double newLongitude = event.get("longitude").getAsDouble();
+        double userRating = event.get("user_rating").getAsDouble();
 
         String key = constructKey(blockId, driverId);
 
