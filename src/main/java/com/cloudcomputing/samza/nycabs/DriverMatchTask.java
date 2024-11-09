@@ -1,10 +1,5 @@
 package com.cloudcomputing.samza.nycabs;
 
-import java.io.IOException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.JsonNode;
-
 import org.apache.samza.context.Context;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
@@ -15,8 +10,8 @@ import org.apache.samza.task.StreamTask;
 import org.apache.samza.task.TaskCoordinator;
 
 import com.google.gson.Gson;
-
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.apache.samza.storage.kv.KeyValueIterator;
 
