@@ -66,7 +66,7 @@ public class TestDriverMatchTask {
         Assert.assertTrue(rightBlockTest.get("clientId").toString().equals("7")
                 && rightBlockTest.get("driverId").toString().equals("3002"));
         Map<String, Object> matchTest = (Map<String, Object>) resultIter.next();
-        // I didnt s the TODO of the required test so I made this one based on my understanding of the requirements
+        // I didnt saw the TODO of the required test so I made this one based on my understanding of the requirements
         // new mock data is added to events and driverlocations
         Assert.assertTrue(matchTest.get("clientId").toString().equals("10")
                 && matchTest.get("driverId").toString().equals("1001"));
