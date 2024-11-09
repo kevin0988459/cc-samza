@@ -53,11 +53,9 @@ public class DriverMatchTask implements StreamTask, InitableTask {
          */
         String incomingStream = envelope.getSystemStreamPartition().getStream();
         Object messageObj = envelope.getMessage();
-
-        System.out.println("Message type: " + messageObj.getClass().getName());
-        String message = (String) envelope.getMessage();
+        Map<String, Object> messageMap = (Map<String, Object>) messageObj;
         try {
-            JsonNode jsonNode = objectMapper.readTree(message);
+            JsonNode jsonNode = objectMapper.readTree(messageMap.toString());
             if (incomingStream.equals(DriverMatchConfig.DRIVER_LOC_STREAM.getStream())) {
                 // Handle Driver Location messages
                 handleDriverLocation(jsonNode);
