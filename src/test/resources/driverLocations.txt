@@ -1,0 +1,2 @@
+{"blockId":5650,"driverId":1001,"latitude":40.712776,"longitude":-74.005974,"status":"AVAILABLE","rating":4.5,"salary":60,"gender":"M"}
+{"blockId":5650,"driverId":1002,"latitude":40.712776,"longitude":-74.005974,"status":"UNAVAILABLE","rating":4.0,"salary":55,"gender":"F"}

@@ -21,3 +21,8 @@
 {"blockId":5646,"driverId":3001,"latitude":15.0,"longitude":15.0,"type":"ENTERING_BLOCK","status":"AVAILABLE","rating":4.15,"salary":62,"gender":"M"}
 {"blockId":5649,"driverId":3002,"latitude":16.0,"longitude":16.0,"type":"ENTERING_BLOCK","status":"AVAILABLE","rating":0.15,"salary":62,"gender":"M"}
 {"blockId":5649,"clientId":7,"latitude":7.0,"longitude":7.0,"type":"RIDE_REQUEST","gender_preference":"N"}
+// Test blockID and availability matching
+{"blockId":5650,"driverId":1001,"latitude":40.712776,"longitude":-74.005974,"type":"ENTERING_BLOCK","status":"AVAILABLE","rating":4.5,"salary":60,"gender":"M"}
+{"blockId":5650,"driverId":1002,"latitude":40.712776,"longitude":-74.005974,"type":"ENTERING_BLOCK","status":"UNAVAILABLE","rating":4.0,"salary":55,"gender":"F"}
+{"blockId":5650,"clientId":10,"latitude":40.712776,"longitude":-74.005974,"type":"RIDE_REQUEST","gender_preference":"M"}
+{"blockId":5650,"driverId":1001,"latitude":40.712776,"longitude":-74.005974,"type":"LEAVING_BLOCK","status":"AVAILABLE"}
