@@ -3,8 +3,10 @@ package com.cloudcomputing.samza.nycabs.application;
 import com.cloudcomputing.samza.nycabs.DriverMatchTask;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
 import java.util.List;
 import java.util.Map;
+
 import org.apache.samza.application.TaskApplication;
 import org.apache.samza.application.descriptors.TaskApplicationDescriptor;
 import org.apache.samza.serializers.JsonSerde;
@@ -13,7 +15,10 @@ import org.apache.samza.system.kafka.descriptors.KafkaOutputDescriptor;
 import org.apache.samza.system.kafka.descriptors.KafkaSystemDescriptor;
 import org.apache.samza.task.StreamTaskFactory;
 
+import com.cloudcomputing.samza.nycabs.DriverMatchConfig;
+
 public class DriverMatchTaskApplication implements TaskApplication {
+
     // Consider modify this zookeeper address, localhost may not be a good choice.
     // If this task application is executing in slave machine.
     private static final List<String> KAFKA_CONSUMER_ZK_CONNECT = ImmutableList.of("localhost:2181");
@@ -34,14 +39,30 @@ public class DriverMatchTaskApplication implements TaskApplication {
         // Hint about streams, please refer to DriverMatchConfig.java
         // We need two input streams "events", "driver-locations", one output stream
         // "match-stream".
+        KafkaInputDescriptor driverLocInputDescriptor
+                = kafkaSystemDescriptor.getInputDescriptor(DriverMatchConfig.DRIVER_LOC_STREAM.getStream(), new JsonSerde<>());
+
+        KafkaInputDescriptor eventInputDescriptor
+                = kafkaSystemDescriptor.getInputDescriptor(DriverMatchConfig.EVENT_STREAM.getStream(), new JsonSerde<>());
+
+        // Output descriptor for the match stream
+        KafkaOutputDescriptor kafkaOutputDescriptor
+                = kafkaSystemDescriptor.getOutputDescriptor(DriverMatchConfig.MATCH_STREAM.getStream(), new JsonSerde<>());
 
         // Define your input and output descriptor in here.
         // Reference solution:
         // https://github.com/apache/samza-hello-samza/blob/master/src/main/java/samza/examples/wikipedia/task/application/WikipediaStatsTaskApplication.java
-
         // Bound you descriptor with your taskApplicationDescriptor in here.
         // Please refer to the same link.
+        // Set the default system
+        taskApplicationDescriptor.withDefaultSystem(kafkaSystemDescriptor);
 
-        taskApplicationDescriptor.withTaskFactory((StreamTaskFactory)() -> new DriverMatchTask());
+        // Register input and output streams
+        taskApplicationDescriptor.withInputStream(driverLocInputDescriptor);
+        taskApplicationDescriptor.withInputStream(eventInputDescriptor);
+        taskApplicationDescriptor.withOutputStream(kafkaOutputDescriptor);
+
+        // Set the TaskFactory to use DriverMatchTask
+        taskApplicationDescriptor.withTaskFactory((StreamTaskFactory) () -> new DriverMatchTask());
     }
 }
