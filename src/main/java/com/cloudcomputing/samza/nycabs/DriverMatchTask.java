@@ -52,6 +52,9 @@ public class DriverMatchTask implements StreamTask, InitableTask {
         into the same reducer.
          */
         String incomingStream = envelope.getSystemStreamPartition().getStream();
+        Object messageObj = envelope.getMessage();
+
+        System.out.println("Message type: " + messageObj.getClass().getName());
         String message = (String) envelope.getMessage();
         try {
             JsonNode jsonNode = objectMapper.readTree(message);
