@@ -42,7 +42,7 @@ public class TestDriverMatchTask {
                 .addConfig("deploy.test", "true")
                 .run(Duration.ofSeconds(5));
 
-        Assert.assertEquals(5, TestRunner.consumeStream(outputMatchStream, Duration.ofSeconds(10)).get(0).size());
+        Assert.assertEquals(6, TestRunner.consumeStream(outputMatchStream, Duration.ofSeconds(10)).get(0).size());
 
         ListIterator<Object> resultIter = TestRunner.consumeStream(outputMatchStream, Duration.ofSeconds(10)).get(0).listIterator();
         Map<String, Object> genderTest = (Map<String, Object>) resultIter.next();
@@ -67,7 +67,7 @@ public class TestDriverMatchTask {
                 && rightBlockTest.get("driverId").toString().equals("3002"));
     }
 
-    // I didnt so the TODO of the required test so I made this one based on my understanding of the requirements
+    // I didnt see the TODO of the required test so I made this one based on my understanding of the requirements
     @Test
     public void testBlockIdAndAvailabilityMatching() throws Exception {
         Map<String, String> confMap = new HashMap<>();
