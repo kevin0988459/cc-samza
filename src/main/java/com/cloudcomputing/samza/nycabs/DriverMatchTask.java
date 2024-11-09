@@ -13,6 +13,7 @@ import org.apache.samza.task.InitableTask;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.StreamTask;
 import org.apache.samza.task.TaskCoordinator;
+import com.google.gson.Gson;
 
 import java.util.*;
 
@@ -52,11 +53,11 @@ public class DriverMatchTask implements StreamTask, InitableTask {
         into the same reducer.
          */
         String incomingStream = envelope.getSystemStreamPartition().getStream();
-        Object messageObj = envelope.getMessage();
+        String messageObj = envelope.getMessage().toString();
         System.out.println("messageObj:" + messageObj + " type:" + messageObj.getClass().getName());
-        Map<String, Object> messageMap = (Map<String, Object>) messageObj;
+        // Map<String, Object> messageMap = (Map<String, Object>) messageObj;
         try {
-            JsonNode jsonNode = objectMapper.valueToTree(messageMap);
+            JsonNode jsonNode = objectMapper.readTree(messageObj);
             System.out.println("jsonNode:" + jsonNode);
             if (incomingStream.equals(DriverMatchConfig.DRIVER_LOC_STREAM.getStream())) {
                 // Handle Driver Location messages
