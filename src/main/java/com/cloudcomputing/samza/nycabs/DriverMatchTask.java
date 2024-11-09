@@ -103,7 +103,7 @@ public class DriverMatchTask implements StreamTask, InitableTask {
     private void handleEvent(JsonNode event, MessageCollector collector) {
         System.out.println("event:" + event);
         String eventType = event.get("type").asText();
-
+        System.out.println("eventType:" + eventType);
         switch (eventType) {
             case "ENTERING_BLOCK":
                 handleEnteringBlock(event);
