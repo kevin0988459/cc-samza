@@ -240,8 +240,7 @@ public class DriverMatchTask implements StreamTask, InitableTask {
 
             // Serialize match result to JSON and emit to match-stream
             try {
-                String matchJson = gson.toJson(matchResult);
-                collector.send(new OutgoingMessageEnvelope(MATCH_STREAM, matchJson));
+                collector.send(new OutgoingMessageEnvelope(MATCH_STREAM, matchResult));
             } catch (Exception e) {
                 System.err.println("Failed to serialize match result: " + e.getMessage());
             }
