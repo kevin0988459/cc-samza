@@ -94,7 +94,7 @@ public class TestDriverMatchTask {
 
         ListIterator<Object> resultIter = TestRunner.consumeStream(outputMatchStream, Duration.ofSeconds(10)).get(0).listIterator();
         Map<String, Object> matchTest = (Map<String, Object>) resultIter.next();
-
+        System.out.println("Actual match result: " + matchTest);
         Assert.assertTrue(matchTest.get("clientId").toString().equals("10")
                 && matchTest.get("driverId").toString().equals("1001"));
     }
